@@ -9,6 +9,7 @@
 #define KEYCODE_U 0x41
 #define KEYCODE_D 0x42
 #define KEYCODE_Q 0x71
+#define KEYCODE_0 0x30
 
 class TeleopTurtle
 {
@@ -90,29 +91,35 @@ void TeleopTurtle::keyLoop()
       exit(-1);
     }
 
-    linear_=angular_=0;
+//    linear_=angular_=0;
     ROS_DEBUG("value: 0x%02X\n", c);
   
     switch(c)
     {
       case KEYCODE_L:
         ROS_DEBUG("LEFT");
-        angular_ = 1.0;
+        angular_++;//_ = 1.0;
         dirty = true;
         break;
       case KEYCODE_R:
         ROS_DEBUG("RIGHT");
-        angular_ = -1.0;
+        angular_--;// = -1.0;
         dirty = true;
         break;
       case KEYCODE_U:
         ROS_DEBUG("UP");
-        linear_ = 1.0;
+        linear_++;// = 1.0;
         dirty = true;
         break;
       case KEYCODE_D:
         ROS_DEBUG("DOWN");
-        linear_ = -1.0;
+        linear_--;// = -1.0;
+        dirty = true;
+        break;
+      case KEYCODE_0:
+        ROS_DEBUG("ZERO'd");
+        linear_ = 0.0;
+        angular_ = 0.0;
         dirty = true;
         break;
     }
