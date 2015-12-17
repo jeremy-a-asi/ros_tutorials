@@ -65,8 +65,8 @@ int main(int argc, char** argv)
 void TeleopTurtle::keyLoop()
 {
   char c;
-  bool dirty=false;
-
+  geometry_msgs::Twist twist;
+  ros::Rate loop_rate(5);
 
   // get the console in raw mode                                                              
   tcgetattr(kfd, &cooked);
@@ -82,57 +82,51 @@ void TeleopTurtle::keyLoop()
   puts("Use arrow keys to move the turtle.");
 
 
-  for(;;)
+  while(ros::ok())
   {
     // get the next event from the keyboard  
     if(read(kfd, &c, 1) < 0)
     {
       perror("read():");
-      exit(-1);
     }
-
-//    linear_=angular_=0;
-    ROS_DEBUG("value: 0x%02X\n", c);
-  
-    switch(c)
+    else
     {
-      case KEYCODE_L:
-        ROS_DEBUG("LEFT");
-        angular_++;//_ = 1.0;
-        dirty = true;
-        break;
-      case KEYCODE_R:
-        ROS_DEBUG("RIGHT");
-        angular_--;// = -1.0;
-        dirty = true;
-        break;
-      case KEYCODE_U:
-        ROS_DEBUG("UP");
-        linear_++;// = 1.0;
-        dirty = true;
-        break;
-      case KEYCODE_D:
-        ROS_DEBUG("DOWN");
-        linear_--;// = -1.0;
-        dirty = true;
-        break;
-      case KEYCODE_0:
-        ROS_DEBUG("ZERO'd");
-        linear_ = 0.0;
-        angular_ = 0.0;
-        dirty = true;
-        break;
+
+        ROS_DEBUG("value: 0x%02X\n", c);
+
+        switch(c)
+        {
+          case KEYCODE_L:
+            ROS_DEBUG("LEFT");
+            angular_++;//_ = 1.0;
+            break;
+          case KEYCODE_R:
+            ROS_DEBUG("RIGHT");
+            angular_--;// = -1.0;
+            break;
+          case KEYCODE_U:
+            ROS_DEBUG("UP");
+            linear_++;// = 1.0;
+            break;
+          case KEYCODE_D:
+            ROS_DEBUG("DOWN");
+            linear_--;// = -1.0;
+            break;
+          case KEYCODE_0:
+            ROS_DEBUG("ZERO'd");
+            linear_ = 0.0;
+            angular_ = 0.0;
+            break;
+        }
     }
    
 
-    geometry_msgs::Twist twist;
     twist.angular.z = a_scale_*angular_;
     twist.linear.x = l_scale_*linear_;
-    if(dirty ==true)
-    {
-      twist_pub_.publish(twist);    
-      dirty=false;
-    }
+
+    twist_pub_.publish(twist);
+    ros::spinOnce();
+    loop_rate.sleep();
   }
 
 
