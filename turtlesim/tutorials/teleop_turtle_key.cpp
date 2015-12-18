@@ -64,7 +64,6 @@ int main(int argc, char** argv)
 
 void TeleopTurtle::keyLoop()
 {
-  char c;
   geometry_msgs::Twist twist;
   ros::Rate loop_rate(5);
 
@@ -72,9 +71,11 @@ void TeleopTurtle::keyLoop()
   tcgetattr(kfd, &cooked);
   memcpy(&raw, &cooked, sizeof(struct termios));
   raw.c_lflag &=~ (ICANON | ECHO);
-  // Setting a new line, then end of file                         
+  // Setting a new line, then end of file
   raw.c_cc[VEOL] = 1;
   raw.c_cc[VEOF] = 2;
+  raw.c_cc[VTIME] = 0;
+  raw.c_cc[VMIN] =  0;
   tcsetattr(kfd, TCSANOW, &raw);
 
   puts("Reading from keyboard");
@@ -85,14 +86,16 @@ void TeleopTurtle::keyLoop()
   while(ros::ok())
   {
     // get the next event from the keyboard  
-    if(read(kfd, &c, 1) < 0)
+      char c;
+    int readRtrn = read(kfd, &c, 1);
+    if(readRtrn < 0)
     {
       perror("read():");
     }
-    else
+    else if (readRtrn == 1)
     {
 
-        ROS_DEBUG("value: 0x%02X\n", c);
+        ROS_DEBUG("value: 0x%02X %d\n", c, readRtrn);
 
         switch(c)
         {
@@ -123,6 +126,7 @@ void TeleopTurtle::keyLoop()
 
     twist.angular.z = a_scale_*angular_;
     twist.linear.x = l_scale_*linear_;
+//    ROS_INFO("sending scaling %f %f", twist.angular.z, twist.linear.x);
 
     twist_pub_.publish(twist);
     ros::spinOnce();
