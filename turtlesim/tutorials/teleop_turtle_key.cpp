@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <termios.h>
 #include <stdio.h>
+#include <std_msgs/Float64.h>
 
 #define KEYCODE_R 0x43 
 #define KEYCODE_L 0x44
@@ -23,6 +24,8 @@ private:
   ros::NodeHandle nh_;
   double linear_, angular_, l_scale_, a_scale_;
   ros::Publisher twist_pub_;
+  ros::Publisher vel_pub_;
+  ros::Publisher steer_pub_;
   
 };
 
@@ -36,6 +39,8 @@ TeleopTurtle::TeleopTurtle():
   nh_.param("scale_linear", l_scale_, l_scale_);
 
   twist_pub_ = nh_.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 1);
+  vel_pub_ = nh_.advertise<std_msgs::Float64>("/myRobot/joint2_position_controller/command", 1);
+  steer_pub_ = nh_.advertise<std_msgs::Float64>("/myRobot/joint1_position_controller/command", 1);
 }
 
 int kfd = 0;
@@ -126,9 +131,15 @@ void TeleopTurtle::keyLoop()
 
     twist.angular.z = a_scale_*angular_;
     twist.linear.x = l_scale_*linear_;
+    std_msgs::Float64 velocity;
+    velocity.data = twist.linear.x;
+    std_msgs::Float64 steer;
+    steer.data = twist.angular.z ;
 //    ROS_INFO("sending scaling %f %f", twist.angular.z, twist.linear.x);
 
     twist_pub_.publish(twist);
+      vel_pub_.publish(velocity);
+      steer_pub_.publish(steer);
     ros::spinOnce();
     loop_rate.sleep();
   }
