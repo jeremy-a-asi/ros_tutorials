@@ -1,0 +1,5 @@
+<launch>
+    <test test-name="lidar_test" pkg="gm_lidar_system" type="calibration_test" />
+    <!--node name="listener" pkg="roscpp_tutorials" type="listener" output="screen"/>
+    <node name="talker" pkg="roscpp_tutorials" type="talker" output="screen"/-->
+</launch>

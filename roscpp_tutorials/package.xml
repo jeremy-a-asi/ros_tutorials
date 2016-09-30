@@ -29,4 +29,6 @@
   <run_depend>roscpp_serialization</run_depend>
   <run_depend>rostime</run_depend>
   <run_depend>std_msgs</run_depend>
+
+  <test_depend>gtest</test_depend>
 </package>
