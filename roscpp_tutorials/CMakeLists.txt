@@ -4,7 +4,6 @@ project(roscpp_tutorials)
 find_package(Boost REQUIRED COMPONENTS date_time thread)
 find_package(catkin REQUIRED COMPONENTS message_generation rostime roscpp rosconsole roscpp_serialization)
 
-include_directories(${catkin_INCLUDE_DIRS})
 include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "ros/ros.h"
 #include <ros/package.h>
+#include <boost/thread.hpp>
 
 int g_argc;
 char** g_argv;
