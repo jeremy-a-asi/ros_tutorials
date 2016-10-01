@@ -20,10 +20,10 @@ macro(rostutorial T)
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 endmacro()
 
-foreach(dir
-    listener
+#foreach(dir
+#    listener
 #    notify_connect
-    talker
+#    talker
 #    babbler
 #    add_two_ints_client
 #    add_two_ints_server
@@ -41,9 +41,21 @@ foreach(dir
 #    custom_callback_processing
 #    timers
 #    parameters
-    )
-  rostutorial(${dir})
-endforeach()
+#    )
+#  rostutorial(${dir})
+#endforeach()
+
+add_executable(talker talker/talker.cpp talker/talker_publisher.cpp)
+target_link_libraries(talker ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(talker roscpp_tutorials_gencpp)
+install(TARGETS talker
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+add_executable(listener listener/listener.cpp listener/listener_subscriber.cpp)
+target_link_libraries(listener ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(listener roscpp_tutorials_gencpp)
+install(TARGETS listener
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 #add_executable(time_api_sleep time_api/sleep/sleep.cpp)
 #target_link_libraries(time_api_sleep ${catkin_LIBRARIES})

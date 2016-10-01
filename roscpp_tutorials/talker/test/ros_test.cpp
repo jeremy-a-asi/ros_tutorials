@@ -9,9 +9,8 @@ char** g_argv;
 TEST(LoadCalibration, CalibrationSuccessfullyRead)
 {
   ros::NodeHandle nh;
-  //TODO TestNode is an possible class from a library to handle the details of this node.
-//  TestNode tstNode(boost::make_shared<ros::NodeHandle>(nh), "test");
-
+//  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+//  boost::shared_ptr<ros::Publisher> chatter_pub_ptr = boost::make_shared<ros::Publisher>(chatter_pub);
 
 //  EXPECT_TRUE(blah);
 }
@@ -24,7 +23,7 @@ int main(int argc, char** argv)
   // then we can skip this
   g_argc = argc;
   g_argv = argv;
-  ros::init(g_argc, g_argv, "test");
+  ros::init(g_argc, g_argv, "test_publisher");
 
   boost::thread spinner(boost::bind(&ros::spin));
 
