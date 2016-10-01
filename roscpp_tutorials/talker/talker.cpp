@@ -34,6 +34,37 @@
 
 #include <sstream>
 
+
+//publisher
+void talkPublish(int count, boost::shared_ptr<ros::Publisher> ch_pub_ptr)
+{
+    /**
+     * This is a message object. You stuff it with data, and then publish it.
+     */
+// %Tag(FILL_MESSAGE)%
+    std_msgs::String msg;
+
+    std::stringstream ss;
+    ss << "hello world " << count;
+    msg.data = ss.str();
+// %EndTag(FILL_MESSAGE)%
+
+// %Tag(ROSCONSOLE)%
+    ROS_INFO("%s", msg.data.c_str());
+// %EndTag(ROSCONSOLE)%
+
+    /**
+     * The publish() function is how you send messages. The parameter
+     * is the message object. The type of this object must agree with the type
+     * given as a template parameter to the advertise<>() call, as was done
+     * in the constructor above.
+     */
+// %Tag(PUBLISH)%
+    ch_pub_ptr->publish(msg);
+// %EndTag(PUBLISH)%
+
+}
+
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
  */
@@ -81,6 +112,9 @@ int main(int argc, char **argv)
    */
 // %Tag(PUBLISHER)%
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  boost::shared_ptr<ros::Publisher> chatter_pub_ptr = boost::make_shared<ros::Publisher>(chatter_pub);
+
+
 // %EndTag(PUBLISHER)%
 
 // %Tag(LOOP_RATE)%
@@ -96,31 +130,9 @@ int main(int argc, char **argv)
   while (ros::ok())
   {
 // %EndTag(ROS_OK)%
-    /**
-     * This is a message object. You stuff it with data, and then publish it.
-     */
-// %Tag(FILL_MESSAGE)%
-    std_msgs::String msg;
 
-    std::stringstream ss;
-    ss << "hello world " << count;
-    msg.data = ss.str();
-// %EndTag(FILL_MESSAGE)%
-
-// %Tag(ROSCONSOLE)%
-    ROS_INFO("%s", msg.data.c_str());
-// %EndTag(ROSCONSOLE)%
-
-    /**
-     * The publish() function is how you send messages. The parameter
-     * is the message object. The type of this object must agree with the type
-     * given as a template parameter to the advertise<>() call, as was done
-     * in the constructor above.
-     */
-// %Tag(PUBLISH)%
-    chatter_pub.publish(msg);
-// %EndTag(PUBLISH)%
-
+      ROS_DEBUG_STREAM("calling talkPublish" << count);
+      talkPublish(count, chatter_pub_ptr);
 // %Tag(SPINONCE)%
     ros::spinOnce();
 // %EndTag(SPINONCE)%
