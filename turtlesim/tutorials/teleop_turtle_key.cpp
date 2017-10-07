@@ -48,6 +48,7 @@ struct termios cooked, raw;
 
 void quit(int sig)
 {
+  (void)sig;
   tcsetattr(kfd, TCSANOW, &cooked);
   ros::shutdown();
   exit(0);

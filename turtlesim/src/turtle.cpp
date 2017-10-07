@@ -133,8 +133,11 @@ bool Turtle::update(double dt, QPainter& path_painter, const QImage& path_image,
       orient_ = req.theta;
     }
 
-    path_painter.setPen(pen_);
-    path_painter.drawLine(pos_ * meter_, old_pos * meter_);
+    if (pen_on_)
+    {
+      path_painter.setPen(pen_);
+      path_painter.drawLine(pos_ * meter_, old_pos * meter_);
+    }
     modified = true;
   }
 
@@ -148,7 +151,9 @@ bool Turtle::update(double dt, QPainter& path_painter, const QImage& path_image,
 
   QPointF old_pos = pos_;
 
-  orient_ = std::fmod(orient_ + ang_vel_ * dt, 2*PI);
+  orient_ = orient_ + ang_vel_ * dt;
+  // Keep orient_ between -pi and +pi
+  orient_ -= 2*PI * std::floor((orient_ + PI)/(2*PI));
   pos_.rx() += std::sin(orient_ + PI/2.0) * lin_vel_ * dt;
   pos_.ry() += std::cos(orient_ + PI/2.0) * lin_vel_ * dt;
 

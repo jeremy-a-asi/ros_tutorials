@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # Software License Agreement (BSD License)
 #
-# Copyright (c) 2008, Willow Garage, Inc.
+# Copyright (c) 2016, Kentaro Wada.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,31 +30,25 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-#
-# Revision $Id$
 
-## Simple talker demo that listens to std_msgs/Strings published 
-## to the 'chatter' topic
+## Timer-based talker demo that published std_msgs/Strings messages
+## to the 'chatter' topic.
 
 import rospy
 from std_msgs.msg import String
 
-def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
 
-def listener():
+def publish_callback(event):
+    hello_str = "hello world %s" % event.current_real.to_sec()
+    rospy.loginfo(hello_str)
+    pub.publish(hello_str)
 
-    # In ROS, nodes are uniquely named. If two nodes with the same
-    # name are launched, the previous one is kicked off. The
-    # anonymous=True flag means that rospy will choose a unique
-    # name for our 'listener' node so that multiple listeners can
-    # run simultaneously.
-    rospy.init_node('listener', anonymous=True)
-
-    rospy.Subscriber('chatter', String, callback)
-
-    # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
 
 if __name__ == '__main__':
-    listener()
+    try:
+        rospy.init_node('talker', anonymous=True)
+        pub = rospy.Publisher('chatter', String, queue_size=10)
+        timer = rospy.Timer(rospy.Duration(1. / 10), publish_callback)  # 10Hz
+        rospy.spin()
+    except rospy.ROSInterruptException:
+        pass
